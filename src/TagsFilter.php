@@ -8,7 +8,7 @@ class TagsFilter
 {
     private $data;
 
-    public function __construct(array $dataColl)
+    public function __construct( $dataColl)
     {
         $this->data = $dataColl;
 

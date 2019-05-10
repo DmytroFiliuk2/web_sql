@@ -8,7 +8,18 @@ include_once('dbConnect.php');
 include("TagsFilter.php");
 include("config.php");
 include("Paginator.php");
-require_once "src/functions.php";
+require_once "functions.php";
+
+$books = $dbh->query('SELECT * from book');
+//foreach($books as $b)
+//{
+//    print_r($b);
+//
+//}
+
+//var_dump($books);
+//die();
+
 
 
 #use function searchByName;

@@ -38,3 +38,33 @@ VALUES (1,
         'https://www.amazon.com/Mastering-PHP-configure-professional-applications/dp/17858828138',
         22.39);
 COMMIT;
+
+
+--
+-- Dumping data for table film_category
+--
+
+
+SET AUTOCOMMIT = 0;
+INSERT INTO book_tag
+VALUES (1,1, 1, '2006-02-15 05:07:09'),
+       (2,1, 2, '2006-02-15 05:07:09'),
+       (3,1, 3, '2006-02-15 05:07:09'),
+       (4,2, 1, '2006-02-15 05:07:09'),
+       (5,2, 4, '2006-02-15 05:07:09'),
+       (6,3, 5, '2006-02-15 05:07:09');
+COMMIT;
+
+--
+-- Dumping data for table tag
+--
+
+SET AUTOCOMMIT = 0;
+INSERT INTO tag
+VALUES (1, 'php', '2006-02-15 04:46:27'),
+       (2, 'mysql', '2006-02-15 04:46:27'),
+       (3, 'jquery', '2006-02-15 04:46:27'),
+       (4, 'wordpress', '2006-02-15 04:46:27'),
+       (5, 'laravel', '2006-02-15 04:46:27');
+
+COMMIT;
