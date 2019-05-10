@@ -3,12 +3,15 @@ error_reporting(-1);
 ini_set('display_errors', 'On');
 
 session_start();
-
+include_once('dbConnect.php');
 
 include("TagsFilter.php");
 include("config.php");
 include("Paginator.php");
+require_once "src/functions.php";
 
+
+#use function searchByName;
 use src\Paginator;
 use src\TagsFilter;
 
