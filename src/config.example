@@ -1,0 +1,10 @@
+<?php
+$driver = '*';
+$host = '*';
+$dbName = 'books';
+$user = '*';
+$pass = '*';
+$defaultPaginationValue = 4;
+
+
+//add values and rename to config.php

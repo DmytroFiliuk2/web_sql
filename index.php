@@ -47,9 +47,10 @@ require_once "src/functions.php"; ?>
                         <th>tags</th>
                     </tr>
                     </thead>
-                    <?php if (count($currentPageContent) > 0) {
-
-                        foreach ($currentPageContent as $book) {
+                    <?php //if (count($currentPageContent) > 0) {
+                    if (true) {
+                        #var_dump($booksQuery);
+                        foreach ($booksQuery as $book) {
                             ?>
                             <tr>
                                 <td><?= (key_exists('ISBN', $book)) ? $book['ISBN'] : 'ISBN is not insert' ?></td>
@@ -72,19 +73,19 @@ require_once "src/functions.php"; ?>
                     ?>
                 </table>
             </div>
-            <ul class="pagination">
-                <?php
-                $pageIds = $paginator->pageIds();
-                foreach ($pageIds as $id) {
-                    if ($_GET['currentPage'] == (string)$id) {
-                        echo "<li class=\"page-item active\"><a class=\"page-link\">{$id}</a><li>";
-                    } else {
-                        $pageUrl = "?currentPage={$id}";
-                        echo "<li class=\"page-item\"><a class=\"page-link\" href=\"{$pageUrl}\">{$id}</a></li>";
-                    }
-                }
-                ?>
-            </ul>
+            <!--            <ul class="pagination">-->
+            <!--                --><?php
+            //                $pageIds = $paginator->pageIds();
+            //                foreach ($pageIds as $id) {
+            //                    if ($_GET['currentPage'] == (string)$id) {
+            //                        echo "<li class=\"page-item active\"><a class=\"page-link\">{$id}</a><li>";
+            //                    } else {
+            //                        $pageUrl = "?currentPage={$id}";
+            //                        echo "<li class=\"page-item\"><a class=\"page-link\" href=\"{$pageUrl}\">{$id}</a></li>";
+            //                    }
+            //                }
+            //                ?>
+            <!--            </ul>-->
         </div>
 
         <div class="col-md-4">
@@ -148,7 +149,7 @@ require_once "src/functions.php"; ?>
                     </div>
                 </div>
             </form>
-            <form action="src/RequestParams.php" method="POST">
+            <form action="src/RequestParams.php" method="GET">
                 <div class="card my-4">
                     <h5 class="card-header">Sort by tags</h5>
                     <div class="card-body">
@@ -158,7 +159,7 @@ require_once "src/functions.php"; ?>
                             foreach ($tags as $tag) {
                                 ?>
                                 <p><label><input type="checkbox" name="tag[<?= $tag ?>]"
-                                                 value="<?= $tag ?>" <?= checkTagCookies($tag) ?>><?= $tag ?>
+                                                 value="<?= $tag['name'] ?>" <?= checkTagCookies($tag['name']) ?>><?= $tag['name'] ?>
                                     </label></p>
                                 <?php
                             }
@@ -171,8 +172,8 @@ require_once "src/functions.php"; ?>
             </form>
 
 
-</div>
-</div>
+        </div>
+    </div>
 </div>
 
 <div class="jumbotron text-center" style="margin-bottom:0">

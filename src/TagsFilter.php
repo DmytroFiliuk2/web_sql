@@ -4,48 +4,26 @@
 namespace src;
 
 
+include_once('dbConnect.php');
+
 class TagsFilter
 {
-    private $data;
+    private $dbConn;
 
-    public function __construct( $dataColl)
+    public function __construct($dbConn)
     {
-        $this->data = $dataColl;
+        $this->dbConn = $dbConn;
 
     }
 
     public function getTagsArr()
     {
-        $tagsArr = [];
-        foreach ($this->data as $book) {
-            if (key_exists('tags', $book)) {
-                foreach ($book['tags'] as $singleTag) {
-                    if (!empty($singleTag)) {
-                        $tagsArr [] = $singleTag;
-                    }
-                }
-            }
-        }
-        return array_unique($tagsArr);
+        $tagsQuery =$this->dbConn->query('SELECT name FROM books.tag');
+        $tagsArr = $tagsQuery->fetchAll();
+
+        return $tagsArr;
     }
 
-    public function getContent(array $filter)
-    {
-        $content = [];
 
-        foreach ($this->data as $book) {
-            if (!key_exists('tags', $book)) {
-                continue;
-            }
-
-            if (!array_diff($filter, $book['tags'])) {
-                $content [] = $book;
-            }
-
-        }
-
-
-        return $content;
-    }
 
 }

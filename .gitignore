@@ -1,6 +1,7 @@
 
 /vendor/
-
+.idea/
+src/config.php
 
 composer.phar
 

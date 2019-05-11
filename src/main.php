@@ -3,6 +3,8 @@ error_reporting(-1);
 ini_set('display_errors', 'On');
 
 session_start();
+
+
 include_once('dbConnect.php');
 
 include("TagsFilter.php");
@@ -10,14 +12,17 @@ include("config.php");
 include("Paginator.php");
 require_once "functions.php";
 
-$books = $dbh->query('SELECT * from book');
-//foreach($books as $b)
-//{
-//    print_r($b);
-//
-//}
+$booksQuery = $dbh->query('SELECT * FROM books.book');
 
-//var_dump($books);
+
+$booksQuery=$booksQuery->fetchAll();
+foreach($booksQuery as $b)
+{
+    print_r($b);
+
+}
+
+var_dump($books);
 //die();
 
 
@@ -29,15 +34,15 @@ use src\TagsFilter;
 
 $currentSearchValue = '';
 $currentPaginationValue = $defaultPaginationValue;
+//
+//
+//if (isset($_SESSION["paginationParam"]) && $_SESSION["paginationParam"] != '') {
+//
+//    $currentPaginationValue = ($_SESSION["paginationParam"]);
+//}
 
 
-if (isset($_SESSION["paginationParam"]) && $_SESSION["paginationParam"] != '') {
-
-    $currentPaginationValue = ($_SESSION["paginationParam"]);
-}
-
-
-$tegFilter = new  TagsFilter($books);
+$tegFilter = new  TagsFilter($dbh);
 
 if (isset($_SESSION['searchParam']) && $_SESSION['searchParam'] != '') {
     $currentSearchValue = $_SESSION['searchParam'];
@@ -62,6 +67,6 @@ if (isset($_COOKIE["tags"])) {
 }
 
 
-$paginator = new Paginator($books, $currentPaginationValue);
-$currentPageContent = $paginator->getPageContent();
+#$paginator = new Paginator($books, $currentPaginationValue);
+#$currentPageContent = $paginator->getPageContent();
 

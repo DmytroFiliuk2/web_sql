@@ -26,7 +26,7 @@ class Paginator
         $this->itemsPerPage = $itemsPerPage;
     }
 
-    public function getPageContent():array
+    public function getPageContent()
     {
         $currentData = array_slice($this->dataCollection, $this->currentPage * $this->itemsPerPage,
             $this->itemsPerPage);
