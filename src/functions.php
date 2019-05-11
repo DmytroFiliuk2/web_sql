@@ -36,18 +36,18 @@ function getBooks(PDO $dbCon, $paramsMap)
 
         }
         $sqlPattern1 = "
-        SELECT book.*, book_tag.*, tag.* FROM book
+        SELECT book.name as book_name, tag.name as tag_name FROM book
         INNER JOIN book_tag ON book.book_id=book_tag.book_id 
         INNER JOIN tag ON book_tag.tag_id=tag.tag_id  {$searchFFilter} {$tagsFilter} 
-        {$orderFFilter}";
+        {$orderFFilter};";
 
-        $result = $dbCon->prepare($sqlPattern1);
+        $q = $dbCon->prepare($sqlPattern1);
         foreach ($arr as $key => $value) {
-            $result->bindParam($key, $value, PDO::PARAM_STR);
+            $q->bindValue($key, $value, PDO::PARAM_STR);
         }
-        $result->execute();
-        var_dump($result->fetchAll());
-        return $result;
+        $result=$q->execute();
+        var_dump($arr);
+        return $q;
 
     } else {
 
@@ -56,13 +56,13 @@ function getBooks(PDO $dbCon, $paramsMap)
         }
         $sqlPattern2 = "
      SELECT book.* FROM book {$searchFFilter} 
-        {$orderFFilter}";
-        $result = $dbCon->prepare($sqlPattern2);
+        {$orderFFilter};";
+        $q = $dbCon->prepare($sqlPattern2);
         foreach ($arr as $key => $value) {
-            $result->bindParam($key, $value, PDO::PARAM_STR);
+            $q->bindValue($key, $value, PDO::PARAM_STR);
         }
-        $result->execute();
-        var_dump($result->fetchAll());
+        $result = $q->execute();
+        var_dump($arr);
         return $result;
 
     }
@@ -89,28 +89,36 @@ function checkTagCookies($value)
 }
 
 
-function searchByName($partOfName, array $books): array
+function getTagsArr(PDO $dbConn)
 {
-    if ($partOfName === '') {
-        return $books;
-    }
-    $namesList = [];
-    foreach ($books as $singleBook) {
-        if (stristr($singleBook['name'], $partOfName) !== false) {
-            $namesList[] = $singleBook;
-        }
-    }
+    $tagsQuery = $dbConn->query('SELECT name FROM books.tag');
+    $tagsArr = $tagsQuery->fetchAll();
 
-
-    return $namesList;
-
+    return $tagsArr;
 }
+
+//function searchByName($partOfName, array $books): array
+//{
+//    if ($partOfName === '') {
+//        return $books;
+//    }
+//    $namesList = [];
+//    foreach ($books as $singleBook) {
+//        if (stristr($singleBook['name'], $partOfName) !== false) {
+//            $namesList[] = $singleBook;
+//        }
+//    }
+//
+//
+//    return $namesList;
+//
+//}
 
 #$paramsMap = ['order' => 'book.name', 'searchBY' => 'sql','tags' => ['php', 'sql']];
-$paramsMap = ['searchBY' => '', 'tags' => ['php', 'mysql']];
-$fuf = getBooks($dbh, $paramsMap);
-$c = $fuf->fetchAll();
-foreach ($c as $d) {
-    print_r($d);
-
-}
+//$paramsMap = ['searchBY' => '', 'tags' => ['php', 'mysql']];
+//$fuf = getBooks($dbh, $paramsMap);
+//$c = $fuf->fetchAll();
+//foreach ($c as $d) {
+//    print_r($d);
+//
+//}

@@ -49,21 +49,22 @@ require_once "src/functions.php"; ?>
                     </thead>
                     <?php //if (count($currentPageContent) > 0) {
                     if (true) {
-                        #var_dump($booksQuery);
-                        foreach ($booksQuery as $book) {
+
+                       # $dud = $allContent->fetchAll();
+                        #var_dump($dud);
+                        foreach ($allContent as $book) {
                             ?>
                             <tr>
                                 <td><?= (key_exists('ISBN', $book)) ? $book['ISBN'] : 'ISBN is not insert' ?></td>
-                                <td><?= (key_exists('name', $book)) ? $book['name'] : 'name is not insert' ?></td>
+                                <td><?= (key_exists('name', $book)) ? $book[1] : 'name is not insert' ?></td>
                                 <td><a href="<?= (key_exists('url', $book)) ? $book['url'] : 'url is not insert' ?>">
                                         <img src="<?= (key_exists('poster',
                                             $book)) ? $book['poster'] : 'poster is not insert' ?>" width="189"
                                              height="255">
                                     </a></td>
                                 <td><?= (key_exists('ISBN', $book)) ? $book['price'] : 'price is not insert' ?></td>
-                                <td> <?= (key_exists('tags', $book)) ? implode(",",
-                                        $book['tags']) : 'tags is not insert' ?>
-                                <td>
+
+
                             </tr>
                             <?php
                         }
@@ -91,7 +92,7 @@ require_once "src/functions.php"; ?>
         <div class="col-md-4">
 
             <!-- Search Widget -->
-            <form action="src/RequestParams.php" method="POST">
+            <form action="src/RequestParams.php" method="GET">
                 <div class="card my-4">
                     <h5 class="card-header">Search</h5>
                     <div class="card-body">
@@ -128,16 +129,16 @@ require_once "src/functions.php"; ?>
                 </div>
             </form>
 
-            <form action="src/RequestParams.php" method="POST" name="sho">
+            <form action="src/RequestParams.php" method="GET" name="sho">
                 <div class="card my-4">
                     <h5 class="card-header">Ordered by </h5>
                     <div class="card-body">
                         <div class="form-group">
                             <p>
-                                <label><input name="price_name" type="radio"
+                                <label><input name="book.price" type="radio"
                                               value="price" <?= checkOrderCookies('price') ?>>Price</label>
                                 <label><input name="price_name" type="radio"
-                                              value="name" <?= checkOrderCookies('name') ?>>Name</label></p>
+                                              value="book.name" <?= checkOrderCookies('name') ?>>Name</label></p>
                         </div>
                         <div class="form-group">
                         <span class="input-group-btn">
@@ -155,10 +156,10 @@ require_once "src/functions.php"; ?>
                     <div class="card-body">
                         <div class="form-group">
                             <?php
-                            $tags = $tegFilter->getTagsArr();
+                            $tags = getTagsArr($dbh);
                             foreach ($tags as $tag) {
                                 ?>
-                                <p><label><input type="checkbox" name="tag[<?= $tag ?>]"
+                                <p><label><input type="checkbox" name="tags[]"
                                                  value="<?= $tag['name'] ?>" <?= checkTagCookies($tag['name']) ?>><?= $tag['name'] ?>
                                     </label></p>
                                 <?php

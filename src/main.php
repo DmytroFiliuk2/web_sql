@@ -1,7 +1,6 @@
 <?php
 error_reporting(-1);
 ini_set('display_errors', 'On');
-
 session_start();
 
 
@@ -9,63 +8,44 @@ include_once('dbConnect.php');
 
 include("TagsFilter.php");
 include("config.php");
-include("Paginator.php");
+#include("Paginator.php");
 require_once "functions.php";
 
-$booksQuery = $dbh->query('SELECT * FROM books.book');
+#$booksQuery = $dbh->query('SELECT * FROM books.book');
 
 
-$booksQuery=$booksQuery->fetchAll();
-foreach($booksQuery as $b)
-{
-    print_r($b);
-
-}
-
-var_dump($books);
-//die();
-
-
-
-#use function searchByName;
 use src\Paginator;
-use src\TagsFilter;
 
 
-$currentSearchValue = '';
+$queryMap['searchBY'] = '';
 $currentPaginationValue = $defaultPaginationValue;
-//
-//
-//if (isset($_SESSION["paginationParam"]) && $_SESSION["paginationParam"] != '') {
-//
-//    $currentPaginationValue = ($_SESSION["paginationParam"]);
-//}
 
 
-$tegFilter = new  TagsFilter($dbh);
+$queryMap = [];
 
-if (isset($_SESSION['searchParam']) && $_SESSION['searchParam'] != '') {
-    $currentSearchValue = $_SESSION['searchParam'];
-    $books = searchByName($currentSearchValue, $books);
+if (isset($_SESSION['searchParam'])) {
+    $queryMap['searchBY'] = $_SESSION['searchParam'];
+
+
+}
+
+if (isset($_SESSION['price_name'])) {
+    $queryMap['order'] = $_SESSION['price_name'];
+
 
 }
 
 
-if (isset($_COOKIE["price_name"])) {
-    $priceNameArray = [];
-    foreach ($books as $key => $row) {
-        $priceNameArray[$key] = $row[$_COOKIE["price_name"]];
-    }
-    array_multisort($priceNameArray, SORT_ASC, $books);
-}
+if (isset($_SESSION['tags'])) {
+    $queryMap['tags'] = $_SESSION['tags'];
 
-
-if (isset($_COOKIE["tags"])) {
-
-    $books = $tegFilter->getContent(unserialize($_COOKIE["tags"]));
 
 }
+var_dump($queryMap);
 
+$allContent = getBooks($dbh, $queryMap);
+var_dump($allContent);
+var_dump($allContent->fetchAll());
 
 #$paginator = new Paginator($books, $currentPaginationValue);
 #$currentPageContent = $paginator->getPageContent();
