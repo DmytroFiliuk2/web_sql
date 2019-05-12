@@ -2,6 +2,25 @@
 
 include_once('dbConnect.php');
 
+function getQuery($searchFFilter = '', $orderFFilter = '', $tagsFilter = '')
+{
+
+    $pattern = "
+        SELECT  book.book_name, book.price,book.ISBN, book.url, book.poster ,
+               GROUP_CONCAT(tag.tag_name) AS tags
+        FROM book
+            LEFT JOIN book_tag
+                ON book.book_id = book_tag.book_id
+            LEFT JOIN tag
+                ON book_tag.tag_id = tag.tag_id
+                {$searchFFilter}   {$tagsFilter}
+        GROUP BY book.book_name , book.price,book.ISBN , book.url , book.poster
+       {$orderFFilter}
+        ";
+
+    return $pattern;
+}
+
 function getBooks(PDO $dbCon, $paramsMap)
 {
     $searchFFilter = '';
@@ -22,48 +41,45 @@ function getBooks(PDO $dbCon, $paramsMap)
     }
     if (isset($paramsMap['searchBY'])) {
         $arr[':searchBY'] = "%{$paramsMap['searchBY']}%";
-        $searchFFilter = " WHERE  book.book_name like :searchBY AND ";
+        $searchFFilter = " WHERE  book.book_name like :searchBY and ";
     }
     if (isset($paramsMap['order'])) {
         $arr[':order'] = $paramsMap['order'];
-        $orderFFilter = "order by :order";
+        $orderFFilter = "ORDER BY :order";
     }
-
 
     if (isset($paramsMap['tags'])) {
         if (isset($paramsMap['tags']) && count($paramsMap['tags']) > 1) {
             $tagsFilter = '(' . $tagsFilter . ')';
 
         }
-        $sqlPattern1 = "
-        SELECT  *  FROM book
-        INNER JOIN book_tag ON book.book_id=book_tag.book_id 
-        INNER JOIN tag ON book_tag.tag_id=tag.tag_id  {$searchFFilter} {$tagsFilter} 
-        {$orderFFilter};";
+        $query = getQuery($searchFFilter, $orderFFilter, $tagsFilter);
+        var_dump($query);
 
-        $q = $dbCon->prepare($sqlPattern1);
+
+        $result = $dbCon->prepare($query);
         foreach ($arr as $key => $value) {
-            $q->bindValue($key, $value, PDO::PARAM_STR);
+            $result->bindValue($key, $value, PDO::PARAM_STR);
         }
-        $result = $q->execute();
+        $result->execute();
         var_dump($arr);
-        return $q;
+        return $result;
 
     } else {
 
         if (isset($paramsMap['searchBY'])) {
-            $searchFFilter = str_replace('AND', '', $searchFFilter);
+            $searchFFilter = str_replace('and', '', $searchFFilter);
         }
-        $sqlPattern2 = "
-     SELECT * FROM book {$searchFFilter} 
-        {$orderFFilter}";
-        $q = $dbCon->prepare($sqlPattern2);
+
+        $query = getQuery($searchFFilter, $orderFFilter, $tagsFilter);
+        var_dump($query);
+        $result = $dbCon->prepare($query);
         foreach ($arr as $key => $value) {
-            $q->bindValue($key, $value);
+            $result->bindValue($key, $value);
         }
-        $result = $q->execute();
+        $result->execute();
         var_dump($arr);
-        return $q;
+        return $result;
 
     }
 }

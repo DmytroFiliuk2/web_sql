@@ -26,6 +26,7 @@ if (isset($_GET['tags']) ) {
 } elseif ($_GET['tags'] = NAN && $_GET['submit'] == 'tag') {
     if (isset($_COOKIE['tags'])) {
         unset($_COOKIE['tags']);
+        unset($_SESSION['tags']);
         setcookie('tags', '', time() - 3600, '/');
     }
 

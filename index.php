@@ -50,9 +50,9 @@ require_once "src/functions.php"; ?>
                     <?php //if (count($currentPageContent) > 0) {
                     if (true) {
 
-                       # $dud = $allContent->fetchAll();
+                        $dud = $allContent->fetchAll(PDO::FETCH_ASSOC);
                         #var_dump($dud);
-                        foreach ($allContent as $book) {
+                        foreach ($dud as $book) {
                             ?>
                             <tr>
                                 <td><?= (key_exists('ISBN', $book)) ? $book['ISBN'] : 'ISBN is not insert' ?></td>
@@ -63,7 +63,7 @@ require_once "src/functions.php"; ?>
                                              height="255">
                                     </a></td>
                                 <td><?= (key_exists('ISBN', $book)) ? $book['price'] : 'price is not insert' ?></td>
-
+                                <td><?= (key_exists('tags', $book)) ? $book['tags'] : 'tags is not insert' ?></td>
 
                             </tr>
                             <?php

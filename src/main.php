@@ -5,7 +5,6 @@ session_start();
 
 
 include_once('dbConnect.php');
-
 include("TagsFilter.php");
 include("config.php");
 #include("Paginator.php");
@@ -22,9 +21,6 @@ require_once "functions.php";
 //while ($value = $booksQuery->fetch(PDO::FETCH_ASSOC)) {
 //    var_dump($value);
 //}die();
-use src\Paginator;
-
-
 
 $currentPaginationValue = $defaultPaginationValue;
 
@@ -58,10 +54,10 @@ if (isset($_SESSION['tags'])) {
 var_dump($queryMap);
 
 $allContent = getBooks($dbh, $queryMap);
-$allContsdsdsdent = $allContent;
-var_dump($allContsdsdsdent);
-var_dump($_COOKIE["tags"]);
-var_dump($allContsdsdsdent->fetchAll(PDO::FETCH_ASSOC));
+//$allContsdsdsdent = $allContent;
+//var_dump($allContsdsdsdent);
+//#var_dump($_COOKIE["tags"]);
+//var_dump($allContsdsdsdent->fetchAll(PDO::FETCH_ASSOC));
 
 #$paginator = new Paginator($books, $currentPaginationValue);
 #$currentPageContent = $paginator->getPageContent();
