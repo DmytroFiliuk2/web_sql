@@ -14,7 +14,7 @@ function getBooks(PDO $dbCon, $paramsMap)
     if (isset($paramsMap['tags'])) {
 
         foreach ($paramsMap['tags'] as $index => $tag) {
-            $tagsFilterArr [] = " tag.name = :tag{$index} ";
+            $tagsFilterArr [] = " tag.tag_name = :tag{$index} ";
             $arr[":tag{$index}"] = $tag;
         }
         $tagsFilter = implode("OR", $tagsFilterArr);
@@ -22,7 +22,7 @@ function getBooks(PDO $dbCon, $paramsMap)
     }
     if (isset($paramsMap['searchBY'])) {
         $arr[':searchBY'] = "%{$paramsMap['searchBY']}%";
-        $searchFFilter = " WHERE   book.name like :searchBY AND ";
+        $searchFFilter = " WHERE  book.book_name like :searchBY AND ";
     }
     if (isset($paramsMap['order'])) {
         $arr[':order'] = $paramsMap['order'];
@@ -36,7 +36,7 @@ function getBooks(PDO $dbCon, $paramsMap)
 
         }
         $sqlPattern1 = "
-        SELECT book.name as book_name, tag.name as tag_name FROM book
+        SELECT  *  FROM book
         INNER JOIN book_tag ON book.book_id=book_tag.book_id 
         INNER JOIN tag ON book_tag.tag_id=tag.tag_id  {$searchFFilter} {$tagsFilter} 
         {$orderFFilter};";
@@ -45,7 +45,7 @@ function getBooks(PDO $dbCon, $paramsMap)
         foreach ($arr as $key => $value) {
             $q->bindValue($key, $value, PDO::PARAM_STR);
         }
-        $result=$q->execute();
+        $result = $q->execute();
         var_dump($arr);
         return $q;
 
@@ -55,15 +55,15 @@ function getBooks(PDO $dbCon, $paramsMap)
             $searchFFilter = str_replace('AND', '', $searchFFilter);
         }
         $sqlPattern2 = "
-     SELECT book.* FROM book {$searchFFilter} 
-        {$orderFFilter};";
+     SELECT * FROM book {$searchFFilter} 
+        {$orderFFilter}";
         $q = $dbCon->prepare($sqlPattern2);
         foreach ($arr as $key => $value) {
-            $q->bindValue($key, $value, PDO::PARAM_STR);
+            $q->bindValue($key, $value);
         }
         $result = $q->execute();
         var_dump($arr);
-        return $result;
+        return $q;
 
     }
 }
@@ -81,8 +81,10 @@ function checkOrderCookies($value)
 
 function checkTagCookies($value)
 {
+
     if (isset($_COOKIE["tags"])) {
-        if (in_array($value, unserialize($_COOKIE["tags"]))) {
+
+        if (strpos($_COOKIE["tags"], $value)!=false) {
             return "checked = 'checked'";
         }
     }
@@ -91,7 +93,7 @@ function checkTagCookies($value)
 
 function getTagsArr(PDO $dbConn)
 {
-    $tagsQuery = $dbConn->query('SELECT name FROM books.tag');
+    $tagsQuery = $dbConn->query('SELECT tag.tag_name FROM books.tag');
     $tagsArr = $tagsQuery->fetchAll();
 
     return $tagsArr;
@@ -122,3 +124,22 @@ function getTagsArr(PDO $dbConn)
 //    print_r($d);
 //
 //}
+//["book_id"]=>
+//    string(1) "1"
+//["book_name"]=>
+//    string(58) "Learning PHP, MySQL & JavaScript: With jQuery, CSS & HTML5"
+//["last_update"]=>
+//    string(19) "2006-02-15 04:46:27"
+//["ISBN"]=>
+//    string(10) "1491978910"
+//["poster"]=>
+//    string(88) "https://images-na.ssl-images-amazon.com/images/I/51aUTzDIxxL._SX379_BO1,204,203,200_.jpg"
+//["url"]=>
+//    string(77) "https://www.amazon.com/Learning-PHP-MySQL-JavaScript-Javascript/dp/1491978910"
+//["price"]=>
+//    string(5) "31.15"
+//["book_tag_id"]=>
+//    string(1) "3"
+//["tag_id"]=>
+//    string(1) "3"
+//["tag_name"]=>

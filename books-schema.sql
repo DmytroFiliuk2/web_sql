@@ -15,7 +15,7 @@ USE books;
 CREATE TABLE book
 (
     book_id     SMALLINT UNSIGNED NOT NULL AUTO_INCREMENT,
-    name        VARCHAR(300)      NOT NULL,
+    book_name        VARCHAR(300)      NOT NULL,
     last_update TIMESTAMP         NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     ISBN        bigint            NOT NULL,
     poster      VARCHAR(300),
@@ -36,7 +36,7 @@ CREATE TABLE book
 CREATE TABLE tag
 (
     tag_id      TINYINT UNSIGNED   NOT NULL AUTO_INCREMENT,
-    name        VARCHAR(25) UNIQUE NOT NULL,
+    tag_name        VARCHAR(25) UNIQUE NOT NULL,
     last_update TIMESTAMP          NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     PRIMARY KEY (tag_id)
 ) ENGINE = InnoDB

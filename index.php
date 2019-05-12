@@ -56,7 +56,7 @@ require_once "src/functions.php"; ?>
                             ?>
                             <tr>
                                 <td><?= (key_exists('ISBN', $book)) ? $book['ISBN'] : 'ISBN is not insert' ?></td>
-                                <td><?= (key_exists('name', $book)) ? $book[1] : 'name is not insert' ?></td>
+                                <td><?= (key_exists('book_name', $book)) ? $book['book_name'] : 'name is not insert' ?></td>
                                 <td><a href="<?= (key_exists('url', $book)) ? $book['url'] : 'url is not insert' ?>">
                                         <img src="<?= (key_exists('poster',
                                             $book)) ? $book['poster'] : 'poster is not insert' ?>" width="189"
@@ -98,7 +98,7 @@ require_once "src/functions.php"; ?>
                     <div class="card-body">
                         <div class="form-group">
                             <input type="text" class="form-control" placeholder="Search for..." name="searchParam"
-                                   value="<?= $currentSearchValue ?>"
+                                   value="<?= isset($_SESSION['searchParam'])? $_SESSION['searchParam']:'' ?>"
                                    maxlength="300">
 
                         </div>
@@ -135,14 +135,14 @@ require_once "src/functions.php"; ?>
                     <div class="card-body">
                         <div class="form-group">
                             <p>
-                                <label><input name="book.price" type="radio"
+                                <label><input name="price_name" type="radio"
                                               value="price" <?= checkOrderCookies('price') ?>>Price</label>
                                 <label><input name="price_name" type="radio"
-                                              value="book.name" <?= checkOrderCookies('name') ?>>Name</label></p>
+                                              value="name" <?= checkOrderCookies('name') ?>>Name</label></p>
                         </div>
                         <div class="form-group">
                         <span class="input-group-btn">
-                                        <button class="btn btn-info" name="submit" value="order"
+                                        <button class="btn btn-info"
                                                 type="submit">Go!</button>
                                 </span>
                         </div>
@@ -160,7 +160,7 @@ require_once "src/functions.php"; ?>
                             foreach ($tags as $tag) {
                                 ?>
                                 <p><label><input type="checkbox" name="tags[]"
-                                                 value="<?= $tag['name'] ?>" <?= checkTagCookies($tag['name']) ?>><?= $tag['name'] ?>
+                                                 value="<?= $tag['tag_name'] ?>" <?= checkTagCookies($tag['tag_name']) ?>><?= $tag['tag_name'] ?>
                                     </label></p>
                                 <?php
                             }

@@ -20,14 +20,14 @@ if (isset($_GET['price_name'])) {
 }
 
 
-if (isset($_GET['tags'])) {
+if (isset($_GET['tags']) ) {
     $_SESSION["tags"] = $_GET['tags'];
-    setcookie('tags', $_GET['tags'], time() + 3600, '/');
-//} elseif ($_GET['tags'] = NAN && $_GET['submit'] == 'tag') {
-//    if (isset($_COOKIE['tags'])) {
-//        unset($_COOKIE['tags']);
-//        setcookie('tags', '', time() - 3600, '/');
-//    }
+    setcookie('tags',  json_encode($_GET['tags']), time() + 3600, '/');
+} elseif ($_GET['tags'] = NAN && $_GET['submit'] == 'tag') {
+    if (isset($_COOKIE['tags'])) {
+        unset($_COOKIE['tags']);
+        setcookie('tags', '', time() - 3600, '/');
+    }
 
 }
 header("Location: ../index.php");
