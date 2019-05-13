@@ -7,7 +7,7 @@ session_start();
 include_once('DbConnect.php');
 include("TagsFilter.php");
 include("config.php");
-#include("Paginator.php");
+include("Paginator.php");
 require_once "functions.php";
 
 $currentPaginationValue = $defaultPaginationValue;
@@ -17,6 +17,11 @@ $currentPaginationValue = $defaultPaginationValue;
 $queryMap = [];
 $queryMap['searchBY'] = '';
 
+if (isset($_SESSION['paginationParam'])) {
+    $currentPaginationValue = $_SESSION['paginationParam'];
+
+
+}
 if (isset($_SESSION['searchParam'])) {
     $queryMap['searchBY'] = $_SESSION['searchParam'];
 
@@ -43,5 +48,7 @@ if (isset($_SESSION['tags'])) {
 $dbInst = DbConnect::getInstance($OptionsMap);
 $dbConnection = $dbInst->getConnection();
 $allContent = getBooks($dbConnection, $queryMap);
-
-
+$allContent=$allContent->fetchAll(PDO::FETCH_ASSOC);
+$paginator = new \src\Paginator($allContent,$currentPaginationValue);
+//var_dump($paginator->getPageContent());
+//die();

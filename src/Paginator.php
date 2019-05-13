@@ -8,13 +8,16 @@ class Paginator
 {
     private $dataCollection;
     private $pagesCount;
-    private $currentPage;
+    public $currentPage;
     private $itemsPerPage;
+    public $nextPage;
+    public $previousPage;
+
 
     public function __construct($dataCollection, int $itemsPerPage)
     {
         $this->dataCollection = $dataCollection;
-        $this->pagesCount = ceil(count($dataCollection) / $itemsPerPage);
+        $this->pagesCount = ceil(count($dataCollection) / $itemsPerPage) - 1;
         if (!isset($_GET['currentPage'])) {
             $this->currentPage = 0;
             $_GET['currentPage'] = 0;
@@ -24,6 +27,15 @@ class Paginator
 
         }
         $this->itemsPerPage = $itemsPerPage;
+        if ($this->currentPage < $this->pagesCount) {
+            $this->nextPage = $this->currentPage + 1;
+        } else {
+            $this->nextPage = $this->pagesCount;
+        }
+        if ($this->previousPage > 0) {
+            $this->previousPage = $this->currentPage - 1;
+        } else {
+            $this->previousPage = 0;}
     }
 
     public function getPageContent()
@@ -33,14 +45,20 @@ class Paginator
         return $currentData;
     }
 
-    public function pageIds():array
+    public function pageUrls(): array
     {
-        $links = [];
+
+        $pageIds = [];
+        $pageUrls = [];
+        for ($id = 0; $id <= $this->pagesCount; $id++) {
+            $pageUrls[] = "?currentPage={$id}";
+        }
+
         for ($pageId = 0; $pageId < $this->pagesCount; $pageId++) {
             $links [] = $pageId;
 
         }
-        return $links;
+        return $pageUrls;
     }
 
 

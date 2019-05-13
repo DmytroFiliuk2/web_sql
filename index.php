@@ -3,8 +3,9 @@
 error_reporting(-1);
 ini_set('display_errors', 'On');
 include 'src/main.php';
-require_once "src/functions.php"; ?>
-
+require_once "src/functions.php";
+$links = $paginator->pageUrls();
+?>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -50,12 +51,13 @@ require_once "src/functions.php"; ?>
                     <?php //if (count($currentPageContent) > 0) {
                     if (true) {
 
-                        $dud = $allContent->fetchAll(PDO::FETCH_ASSOC);
+                        $dud = $paginator->getPageContent();
                         foreach ($dud as $book) {
                             ?>
                             <tr>
                                 <td><?= (key_exists('ISBN', $book)) ? $book['ISBN'] : 'ISBN is not insert' ?></td>
-                                <td><?= (key_exists('book_name', $book)) ? $book['book_name'] : 'name is not insert' ?></td>
+                                <td><?= (key_exists('book_name',
+                                        $book)) ? $book['book_name'] : 'name is not insert' ?></td>
                                 <td><a href="<?= (key_exists('url', $book)) ? $book['url'] : 'url is not insert' ?>">
                                         <img src="<?= (key_exists('poster',
                                             $book)) ? $book['poster'] : 'poster is not insert' ?>" width="189"
@@ -73,19 +75,35 @@ require_once "src/functions.php"; ?>
                     ?>
                 </table>
             </div>
-            <!--            <ul class="pagination">-->
-            <!--                --><?php
-            //                $pageIds = $paginator->pageIds();
-            //                foreach ($pageIds as $id) {
-            //                    if ($_GET['currentPage'] == (string)$id) {
-            //                        echo "<li class=\"page-item active\"><a class=\"page-link\">{$id}</a><li>";
-            //                    } else {
-            //                        $pageUrl = "?currentPage={$id}";
-            //                        echo "<li class=\"page-item\"><a class=\"page-link\" href=\"{$pageUrl}\">{$id}</a></li>";
-            //                    }
-            //                }
-            //                ?>
-            <!--            </ul>-->
+            <ul class="pagination">
+
+                <li class="page-item">
+                    <a class="page-link"
+                       href="<?= $links[$paginator->previousPage]?>"
+                       tabindex="-1" aria-label="Previous">
+                        <span aria-hidden="false">&laquo;</span>
+                        <span class="sr-only">First</span>
+                    </a>
+                </li>
+                <?php
+
+                foreach ($links as $id => $link) {
+                    if ($id==$paginator->currentPage){
+                        echo " <li class=\"page-item active\"><a class=\"page-link\" href=\"{$link}\">{$id}</a></li>";
+                    }else{
+                        echo "<li class=\"page-item\"><a class=\"page-link\" href=\"{$link}\">{$id}</a></li>";
+                    }
+                } ?>
+                <li>
+                    <a class="page-link"
+                       href="<?= $links[$paginator->nextPage]?>"
+                       aria-label="Next">
+                        <span aria-hidden="true">&raquo;</span>
+                        <span class="sr-only">Last</span>
+                    </a>
+                </li>
+            </ul>
+
         </div>
 
         <div class="col-md-4">
@@ -97,7 +115,7 @@ require_once "src/functions.php"; ?>
                     <div class="card-body">
                         <div class="form-group">
                             <input type="text" class="form-control" placeholder="Search for..." name="searchParam"
-                                   value="<?= isset($_SESSION['searchParam'])? $_SESSION['searchParam']:'' ?>"
+                                   value="<?= isset($_SESSION['searchParam']) ? $_SESSION['searchParam'] : '' ?>"
                                    maxlength="300">
 
                         </div>
