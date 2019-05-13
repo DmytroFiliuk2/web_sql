@@ -1,9 +1,14 @@
 <?php
-$driver = '*';
-$host = '*';
-$dbName = 'books';
-$user = '*';
-$pass = '*';
+
+$OptionsMap = [
+    'driver' => 'mysql',
+    'host' => 'localhost',
+    'dbName' => 'books',
+    'user' => '*',
+    'pass' => '*',
+
+];
+
 $defaultPaginationValue = 4;
 
 

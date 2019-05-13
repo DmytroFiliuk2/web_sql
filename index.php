@@ -51,7 +51,6 @@ require_once "src/functions.php"; ?>
                     if (true) {
 
                         $dud = $allContent->fetchAll(PDO::FETCH_ASSOC);
-                        #var_dump($dud);
                         foreach ($dud as $book) {
                             ?>
                             <tr>
@@ -156,7 +155,7 @@ require_once "src/functions.php"; ?>
                     <div class="card-body">
                         <div class="form-group">
                             <?php
-                            $tags = getTagsArr($dbh);
+                            $tags = getTagsArr($dbConnection);
                             foreach ($tags as $tag) {
                                 ?>
                                 <p><label><input type="checkbox" name="tags[]"

@@ -1,6 +1,10 @@
 <?php
 
-include_once('dbConnect.php');
+error_reporting(-1);
+ini_set('display_errors', 'On');
+
+include_once('DbConnect.php');
+
 
 function getQuery($searchFFilter = '', $orderFFilter = '', $tagsFilter = '')
 {
@@ -21,7 +25,7 @@ function getQuery($searchFFilter = '', $orderFFilter = '', $tagsFilter = '')
     return $pattern;
 }
 
-function getBooks(PDO $dbCon, $paramsMap)
+function getBooks($dbCon, $paramsMap)
 {
     $searchFFilter = '';
     $orderFFilter = "";
@@ -100,7 +104,7 @@ function checkTagCookies($value)
 
     if (isset($_COOKIE["tags"])) {
 
-        if (strpos($_COOKIE["tags"], $value)!=false) {
+        if (strpos($_COOKIE["tags"], $value) != false) {
             return "checked = 'checked'";
         }
     }
@@ -114,48 +118,3 @@ function getTagsArr(PDO $dbConn)
 
     return $tagsArr;
 }
-
-//function searchByName($partOfName, array $books): array
-//{
-//    if ($partOfName === '') {
-//        return $books;
-//    }
-//    $namesList = [];
-//    foreach ($books as $singleBook) {
-//        if (stristr($singleBook['name'], $partOfName) !== false) {
-//            $namesList[] = $singleBook;
-//        }
-//    }
-//
-//
-//    return $namesList;
-//
-//}
-
-#$paramsMap = ['order' => 'book.name', 'searchBY' => 'sql','tags' => ['php', 'sql']];
-//$paramsMap = ['searchBY' => '', 'tags' => ['php', 'mysql']];
-//$fuf = getBooks($dbh, $paramsMap);
-//$c = $fuf->fetchAll();
-//foreach ($c as $d) {
-//    print_r($d);
-//
-//}
-//["book_id"]=>
-//    string(1) "1"
-//["book_name"]=>
-//    string(58) "Learning PHP, MySQL & JavaScript: With jQuery, CSS & HTML5"
-//["last_update"]=>
-//    string(19) "2006-02-15 04:46:27"
-//["ISBN"]=>
-//    string(10) "1491978910"
-//["poster"]=>
-//    string(88) "https://images-na.ssl-images-amazon.com/images/I/51aUTzDIxxL._SX379_BO1,204,203,200_.jpg"
-//["url"]=>
-//    string(77) "https://www.amazon.com/Learning-PHP-MySQL-JavaScript-Javascript/dp/1491978910"
-//["price"]=>
-//    string(5) "31.15"
-//["book_tag_id"]=>
-//    string(1) "3"
-//["tag_id"]=>
-//    string(1) "3"
-//["tag_name"]=>

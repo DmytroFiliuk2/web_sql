@@ -4,26 +4,15 @@ ini_set('display_errors', 'On');
 session_start();
 
 
-include_once('dbConnect.php');
+include_once('DbConnect.php');
 include("TagsFilter.php");
 include("config.php");
 #include("Paginator.php");
 require_once "functions.php";
 
-//
-//$sql = 'SELECT * FROM books.book';
-//$booksQuery = $dbh->prepare($sql);
-//
-//$booksQuery->bindValue(':name', ' book.* ');
-//$booksQuery->execute();
-//
-//
-//while ($value = $booksQuery->fetch(PDO::FETCH_ASSOC)) {
-//    var_dump($value);
-//}die();
-
 $currentPaginationValue = $defaultPaginationValue;
 
+#var_dump($dbh);
 
 $queryMap = [];
 $queryMap['searchBY'] = '';
@@ -37,10 +26,9 @@ if (isset($_SESSION['searchParam'])) {
 if (isset($_SESSION['price_name'])) {
     if ($_SESSION['price_name'] == 'name') {
         $queryMap['order'] = "book.book_name";
-    }elseif($_SESSION['price_name'] == 'price'){
+    } elseif ($_SESSION['price_name'] == 'price') {
         $queryMap['order'] = "book.price";
     }
-
 
 
 }
@@ -51,14 +39,9 @@ if (isset($_SESSION['tags'])) {
 
 
 }
-var_dump($queryMap);
 
-$allContent = getBooks($dbh, $queryMap);
-//$allContsdsdsdent = $allContent;
-//var_dump($allContsdsdsdent);
-//#var_dump($_COOKIE["tags"]);
-//var_dump($allContsdsdsdent->fetchAll(PDO::FETCH_ASSOC));
+$dbInst = DbConnect::getInstance($OptionsMap);
+$dbConnection = $dbInst->getConnection();
+$allContent = getBooks($dbConnection, $queryMap);
 
-#$paginator = new Paginator($books, $currentPaginationValue);
-#$currentPageContent = $paginator->getPageContent();
 
