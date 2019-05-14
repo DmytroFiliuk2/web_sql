@@ -35,7 +35,8 @@ class Paginator
         if ($this->previousPage > 0) {
             $this->previousPage = $this->currentPage - 1;
         } else {
-            $this->previousPage = 0;}
+            $this->previousPage = 0;
+        }
     }
 
     public function getPageContent()
@@ -48,7 +49,6 @@ class Paginator
     public function pageUrls(): array
     {
 
-        $pageIds = [];
         $pageUrls = [];
         for ($id = 0; $id <= $this->pagesCount; $id++) {
             $pageUrls[] = "?currentPage={$id}";

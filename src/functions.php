@@ -113,8 +113,25 @@ function checkTagCookies($value)
 
 function getTagsArr(PDO $dbConn)
 {
-    $tagsQuery = $dbConn->query('SELECT tag.tag_name FROM books.tag');
-    $tagsArr = $tagsQuery->fetchAll();
+    $tagsQuery = $dbConn->query('SELECT tag.tag_name FROM tag');
+    $tagsArr = $tagsQuery->fetchAll(PDO::FETCH_ASSOC);
 
     return $tagsArr;
 }
+
+$dbInst = DbConnect::getInstance($OptionsMap);
+$dbConnection = $dbInst->getConnection();
+var_dump(getTagsArr($dbConnection));
+//$allContent = getBooks($dbConnection, $queryMap);
+//$allContent = $allContent->fetchAll(PDO::FETCH_ASSOC);
+//
+
+
+//
+
+
+
+
+
+
+

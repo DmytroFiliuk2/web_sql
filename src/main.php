@@ -50,5 +50,3 @@ $dbConnection = $dbInst->getConnection();
 $allContent = getBooks($dbConnection, $queryMap);
 $allContent=$allContent->fetchAll(PDO::FETCH_ASSOC);
 $paginator = new \src\Paginator($allContent,$currentPaginationValue);
-//var_dump($paginator->getPageContent());
-//die();

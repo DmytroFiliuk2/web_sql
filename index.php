@@ -48,10 +48,9 @@ $links = $paginator->pageUrls();
                         <th>tags</th>
                     </tr>
                     </thead>
-                    <?php //if (count($currentPageContent) > 0) {
-                    if (true) {
-
-                        $dud = $paginator->getPageContent();
+                    <?php
+                    $dud = $paginator->getPageContent();
+                    if (count($dud)>0) {
                         foreach ($dud as $book) {
                             ?>
                             <tr>
@@ -79,7 +78,7 @@ $links = $paginator->pageUrls();
 
                 <li class="page-item">
                     <a class="page-link"
-                       href="<?= $links[$paginator->previousPage]?>"
+                       href="<?= $links[$paginator->previousPage] ?>"
                        tabindex="-1" aria-label="Previous">
                         <span aria-hidden="false">&laquo;</span>
                         <span class="sr-only">First</span>
@@ -88,15 +87,15 @@ $links = $paginator->pageUrls();
                 <?php
 
                 foreach ($links as $id => $link) {
-                    if ($id==$paginator->currentPage){
+                    if ($id == $paginator->currentPage) {
                         echo " <li class=\"page-item active\"><a class=\"page-link\" href=\"{$link}\">{$id}</a></li>";
-                    }else{
+                    } else {
                         echo "<li class=\"page-item\"><a class=\"page-link\" href=\"{$link}\">{$id}</a></li>";
                     }
                 } ?>
                 <li>
                     <a class="page-link"
-                       href="<?= $links[$paginator->nextPage]?>"
+                       href="<?= $links[$paginator->nextPage] ?>"
                        aria-label="Next">
                         <span aria-hidden="true">&raquo;</span>
                         <span class="sr-only">Last</span>
