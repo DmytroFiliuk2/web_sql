@@ -1,6 +1,7 @@
 <?php
 
 $OptionsMap = [
+
     'driver' => 'mysql',
     'host' => 'localhost',
     'dbName' => 'books',

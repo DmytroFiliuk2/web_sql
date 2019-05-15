@@ -7,7 +7,7 @@ namespace src;
 class Paginator
 {
     private $dataCollection;
-    private $pagesCount;
+    public $pagesCount;
     public $currentPage;
     private $itemsPerPage;
     public $nextPage;
@@ -17,7 +17,7 @@ class Paginator
     public function __construct($dataCollection, int $itemsPerPage)
     {
         $this->dataCollection = $dataCollection;
-        $this->pagesCount = ceil(count($dataCollection) / $itemsPerPage) - 1;
+        $this->pagesCount = ceil(count($dataCollection) / $itemsPerPage)-1;
         if (!isset($_GET['currentPage'])) {
             $this->currentPage = 0;
             $_GET['currentPage'] = 0;
@@ -51,13 +51,11 @@ class Paginator
 
         $pageUrls = [];
         for ($id = 0; $id <= $this->pagesCount; $id++) {
-            $pageUrls[] = "?currentPage={$id}";
+            $_GET['currentPage'] = $id;
+            $dud=  http_build_query($_GET);
+            $pageUrls[] ='?'.$dud;
         }
 
-        for ($pageId = 0; $pageId < $this->pagesCount; $pageId++) {
-            $links [] = $pageId;
-
-        }
         return $pageUrls;
     }
 

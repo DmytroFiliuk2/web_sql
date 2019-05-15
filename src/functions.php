@@ -3,9 +3,6 @@
 error_reporting(-1);
 ini_set('display_errors', 'On');
 
-include_once('DbConnect.php');
-
-
 function getQuery($searchFFilter = '', $orderFFilter = '', $tagsFilter = '')
 {
 
@@ -23,6 +20,14 @@ function getQuery($searchFFilter = '', $orderFFilter = '', $tagsFilter = '')
         ";
 
     return $pattern;
+}
+
+function isInRequest($name){
+    if(isset($_GET[$name])&& $_GET[$name]!="NAN"){
+        return true;
+
+    }
+    return false;
 }
 
 function getBooks($dbCon, $paramsMap)
@@ -48,8 +53,8 @@ function getBooks($dbCon, $paramsMap)
         $searchFFilter = " WHERE  book.book_name like :searchBY and ";
     }
     if (isset($paramsMap['order'])) {
-        $arr[':order'] = $paramsMap['order'];
-        $orderFFilter = "ORDER BY :order";
+
+        $orderFFilter = "ORDER BY  {$paramsMap['order']}";
     }
 
     if (isset($paramsMap['tags'])) {
@@ -58,7 +63,6 @@ function getBooks($dbCon, $paramsMap)
 
         }
         $query = getQuery($searchFFilter, $orderFFilter, $tagsFilter);
-        var_dump($query);
 
 
         $result = $dbCon->prepare($query);
@@ -66,7 +70,6 @@ function getBooks($dbCon, $paramsMap)
             $result->bindValue($key, $value, PDO::PARAM_STR);
         }
         $result->execute();
-        var_dump($arr);
         return $result;
 
     } else {
@@ -76,13 +79,12 @@ function getBooks($dbCon, $paramsMap)
         }
 
         $query = getQuery($searchFFilter, $orderFFilter, $tagsFilter);
-        var_dump($query);
         $result = $dbCon->prepare($query);
         foreach ($arr as $key => $value) {
-            $result->bindValue($key, $value);
+            $result->bindValue($key, $value, PDO::PARAM_STR);
         }
         $result->execute();
-        var_dump($arr);
+
         return $result;
 
     }
@@ -118,16 +120,6 @@ function getTagsArr(PDO $dbConn)
 
     return $tagsArr;
 }
-
-$dbInst = DbConnect::getInstance($OptionsMap);
-$dbConnection = $dbInst->getConnection();
-var_dump(getTagsArr($dbConnection));
-//$allContent = getBooks($dbConnection, $queryMap);
-//$allContent = $allContent->fetchAll(PDO::FETCH_ASSOC);
-//
-
-
-//
 
 
 

@@ -1,10 +1,12 @@
 <?php
 
+
 error_reporting(-1);
 ini_set('display_errors', 'On');
-include 'src/main.php';
-require_once "src/functions.php";
-$links = $paginator->pageUrls();
+
+include("src/main.php");
+
+
 ?>
 
 <!DOCTYPE html>
@@ -50,7 +52,7 @@ $links = $paginator->pageUrls();
                     </thead>
                     <?php
                     $dud = $paginator->getPageContent();
-                    if (count($dud)>0) {
+                    if (count($dud) > 0) {
                         foreach ($dud as $book) {
                             ?>
                             <tr>
@@ -74,60 +76,46 @@ $links = $paginator->pageUrls();
                     ?>
                 </table>
             </div>
-            <ul class="pagination">
+            <div  <?=  isset($paginationInvis) ?$paginationInvis:'' ?> >
+                <ul class="pagination">
 
-                <li class="page-item">
-                    <a class="page-link"
-                       href="<?= $links[$paginator->previousPage] ?>"
-                       tabindex="-1" aria-label="Previous">
-                        <span aria-hidden="false">&laquo;</span>
-                        <span class="sr-only">First</span>
-                    </a>
-                </li>
-                <?php
+                    <li class="page-item" >
+                        <a class="page-link"
+                           href="<?= isset($links[$paginator->previousPage])?$links[$paginator->previousPage]:'' ?>"
+                           tabindex="-1" aria-label="Previous">
+                            <span aria-hidden="false">&laquo;</span>
+                            <span class="sr-only">First</span>
+                        </a>
+                    </li>
+                    <?php
+                    if (isset($links)){
+                    foreach ($links as $id => $link) {
+                        $dudle =$id+1;
+                        if ($id == $paginator->currentPage) {
 
-                foreach ($links as $id => $link) {
-                    if ($id == $paginator->currentPage) {
-                        echo " <li class=\"page-item active\"><a class=\"page-link\" href=\"{$link}\">{$id}</a></li>";
-                    } else {
-                        echo "<li class=\"page-item\"><a class=\"page-link\" href=\"{$link}\">{$id}</a></li>";
-                    }
-                } ?>
-                <li>
-                    <a class="page-link"
-                       href="<?= $links[$paginator->nextPage] ?>"
-                       aria-label="Next">
-                        <span aria-hidden="true">&raquo;</span>
-                        <span class="sr-only">Last</span>
-                    </a>
-                </li>
-            </ul>
-
+                            echo " <li class=\"page-item active\" ><a class=\"page-link\" href=\"{$link}\">{$dudle}</a></li>";
+                        } else {
+                            echo "<li class=\"page-item\"><a class=\"page-link\" href=\"{$link}\">{$dudle}</a></li>";
+                        }
+                    } }?>
+                    <li  >
+                        <a class="page-link"
+                           href="<?= isset($links[$paginator->nextPage])?$links[$paginator->nextPage]:'' ?>"
+                           aria-label="Next">
+                            <span aria-hidden="true">&raquo;</span>
+                            <span class="sr-only">Last</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
         </div>
 
         <div class="col-md-4">
 
             <!-- Search Widget -->
-            <form action="src/RequestParams.php" method="GET">
-                <div class="card my-4">
-                    <h5 class="card-header">Search</h5>
-                    <div class="card-body">
-                        <div class="form-group">
-                            <input type="text" class="form-control" placeholder="Search for..." name="searchParam"
-                                   value="<?= isset($_SESSION['searchParam']) ? $_SESSION['searchParam'] : '' ?>"
-                                   maxlength="300">
 
-                        </div>
-                        <div class="form-group">
-                                <span class="input-group-btn">
-                                        <button class="btn btn-info" type="submit">Go!</button>
-                                </span>
-                        </div>
-                    </div>
-                </div>
-            </form>
 
-            <form action="src/RequestParams.php" method="POST">
+            <form action="<?= rtrim(dirname($_SERVER['PHP_SELF']), '/\\'); ?>/src/RequestParams.php" method="GET">
                 <div class="card my-4">
                     <h5 class="card-header">Pagination value</h5>
                     <div class="card-body">
@@ -136,16 +124,25 @@ $links = $paginator->pageUrls();
                                    placeholder="books per page ..." value="<?= $currentPaginationValue ?>" max="100"
                                    min="1">
                         </div>
-                        <div class="form-group">
-                                <span class="input-group-btn">
-                                        <button class="btn btn-info" type="submit">Go!</button>
-                                </span>
-                        </div>
+
                     </div>
                 </div>
-            </form>
 
-            <form action="src/RequestParams.php" method="GET" name="sho">
+
+                <div class="card my-4">
+                    <h5 class="card-header">Search</h5>
+                    <div class="card-body">
+                        <div class="form-group">
+                            <input type="text" class="form-control" placeholder="Search for..." name="searchParam"
+                                   value="<?= $queryMap['searchBY'] ?>"
+                                   maxlength="300">
+
+                        </div>
+
+                    </div>
+                </div>
+
+
                 <div class="card my-4">
                     <h5 class="card-header">Ordered by </h5>
                     <div class="card-body">
@@ -156,17 +153,12 @@ $links = $paginator->pageUrls();
                                 <label><input name="price_name" type="radio"
                                               value="name" <?= checkOrderCookies('name') ?>>Name</label></p>
                         </div>
-                        <div class="form-group">
-                        <span class="input-group-btn">
-                                        <button class="btn btn-info"
-                                                type="submit">Go!</button>
-                                </span>
-                        </div>
+
 
                     </div>
                 </div>
-            </form>
-            <form action="src/RequestParams.php" method="GET">
+
+
                 <div class="card my-4">
                     <h5 class="card-header">Sort by tags</h5>
                     <div class="card-body">

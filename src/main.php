@@ -1,52 +1,70 @@
 <?php
 error_reporting(-1);
 ini_set('display_errors', 'On');
-session_start();
+
+include 'functions.php';
+include 'DbConnect.php';
+include 'config.php';
+include 'Paginator.php';
 
 
-include_once('DbConnect.php');
-include("TagsFilter.php");
-include("config.php");
-include("Paginator.php");
-require_once "functions.php";
+use src\Paginator;
 
-$currentPaginationValue = $defaultPaginationValue;
-
-#var_dump($dbh);
 
 $queryMap = [];
 $queryMap['searchBY'] = '';
 
-if (isset($_SESSION['paginationParam'])) {
-    $currentPaginationValue = $_SESSION['paginationParam'];
 
-
-}
-if (isset($_SESSION['searchParam'])) {
-    $queryMap['searchBY'] = $_SESSION['searchParam'];
-
-
+if (isInRequest('searchParam')) {
+    $queryMap['searchBY'] = $_GET['searchParam'];
 }
 
-if (isset($_SESSION['price_name'])) {
-    if ($_SESSION['price_name'] == 'name') {
+if (isset($_GET['paginationParam']) &&
+    is_numeric($_GET['paginationParam']) &&
+    $_GET['paginationParam'] !== '' &&
+    $_GET['paginationParam'] != 0
+) {
+
+    $currentPaginationValue = $_GET['paginationParam'];
+
+} else {
+    $currentPaginationValue = $defaultPaginationValue;
+}
+if (isset($_GET['price_name'])) {
+
+    if ($_GET['price_name'] === 'name') {
         $queryMap['order'] = "book.book_name";
-    } elseif ($_SESSION['price_name'] == 'price') {
+        setcookie('price_name', $_GET['price_name'], time() + 3600, '/');
+    } elseif ($_GET['price_name'] === 'price') {
         $queryMap['order'] = "book.price";
+        setcookie('price_name', $_GET['price_name'], time() + 3600, '/');
     }
 
 
 }
 
-
-if (isset($_SESSION['tags'])) {
-    $queryMap['tags'] = $_SESSION['tags'];
-
+if (isInRequest('tags')) {
+    $queryMap['tags'] = $_GET['tags'];
+    setcookie('tags', json_encode($_GET['tags']), time() + 3600, '/');
+} elseif ($_GET['tags'] = NAN) {
+    if (isset($_COOKIE['tags'])) {
+        unset($_COOKIE['tags']);
+        setcookie('tags', '', time() - 3600, '/');
+    }
 
 }
+
 
 $dbInst = DbConnect::getInstance($OptionsMap);
 $dbConnection = $dbInst->getConnection();
 $allContent = getBooks($dbConnection, $queryMap);
-$allContent=$allContent->fetchAll(PDO::FETCH_ASSOC);
-$paginator = new \src\Paginator($allContent,$currentPaginationValue);
+$allContent = $allContent->fetchAll(PDO::FETCH_ASSOC);
+$paginator = new Paginator($allContent, $currentPaginationValue);
+if ($paginator->pagesCount < 1) {
+    $paginationInvis = 'style="display: none;';
+} else {
+    $links = $paginator->pageUrls();
+}
+
+
+
