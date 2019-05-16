@@ -90,12 +90,12 @@ include("src/main.php");
                     <?php
                     if (isset($links)){
                     foreach ($links as $id => $link) {
-                        $dudle =$id+1;
+
                         if ($id == $paginator->currentPage) {
 
-                            echo " <li class=\"page-item active\" ><a class=\"page-link\" href=\"{$link}\">{$dudle}</a></li>";
+                            echo " <li class=\"page-item active\" ><a class=\"page-link\" href=\"{$link}\">{$id}</a></li>";
                         } else {
-                            echo "<li class=\"page-item\"><a class=\"page-link\" href=\"{$link}\">{$dudle}</a></li>";
+                            echo "<li class=\"page-item\"><a class=\"page-link\" href=\"{$link}\">{$id}</a></li>";
                         }
                     } }?>
                     <li  >

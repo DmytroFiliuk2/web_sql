@@ -3,11 +3,58 @@
 error_reporting(-1);
 ini_set('display_errors', 'On');
 
-function getQuery($searchFFilter = '', $orderFFilter = '', $tagsFilter = '')
+function getBindingArr($paramsMap)
+{
+    $arr = [];
+    if (isset($paramsMap['tags'])) {
+        foreach ($paramsMap['tags'] as $index => $tag) {
+            $arr[":tag{$index}"] = $tag;
+        }
+
+    }
+    if (isset($paramsMap['searchBY'])) {
+        $arr[':searchBY'] = "%{$paramsMap['searchBY']}%";
+
+    }
+    return $arr;
+
+}
+
+function getQuery($paramsMap)
 {
 
-    $pattern = "
-        SELECT  book.book_name, book.price,book.ISBN, book.url, book.poster ,
+    $searchFFilter = '';
+    $orderFFilter = "";
+    $tagsFilterArr = [];
+    $tagsFilter = "";
+
+
+    if (isset($paramsMap['tags'])) {
+
+        foreach ($paramsMap['tags'] as $index => $tag) {
+            $tagsFilterArr [] = " tag.tag_name = :tag{$index} ";
+        }
+        $tagsFilter = implode("OR", $tagsFilterArr);
+
+    }
+    if (isset($paramsMap['searchBY'])) {
+        $searchFFilter = " WHERE  book.book_name like :searchBY and ";
+    }
+    if (isset($paramsMap['order'])) {
+        $orderFFilter = "ORDER BY  {$paramsMap['order']}" . "\n";
+    }
+
+    if (isset($paramsMap['tags'])) {
+        if (isset($paramsMap['tags']) && count($paramsMap['tags']) > 1) {
+            $tagsFilter = '(' . $tagsFilter . ')';
+
+        }
+        $pattern = "
+        SELECT book.book_name, 
+               book.price,
+               book.ISBN, 
+               book.url, 
+               book.poster,
                GROUP_CONCAT(tag.tag_name) AS tags
         FROM book
             LEFT JOIN book_tag
@@ -16,78 +63,81 @@ function getQuery($searchFFilter = '', $orderFFilter = '', $tagsFilter = '')
                 ON book_tag.tag_id = tag.tag_id
                 {$searchFFilter}   {$tagsFilter}
         GROUP BY book.book_name , book.price,book.ISBN , book.url , book.poster
-       {$orderFFilter}
-        ";
+       {$orderFFilter}" . 'LIMIT :offset,:items';
 
-    return $pattern;
-}
-
-function isInRequest($name){
-    if(isset($_GET[$name])&& $_GET[$name]!="NAN"){
-        return true;
-
-    }
-    return false;
-}
-
-function getBooks($dbCon, $paramsMap)
-{
-    $searchFFilter = '';
-    $orderFFilter = "";
-    $tagsFilterArr = [];
-    $tagsFilter = "";
-    $result = NAN;
-    $arr = [];
-
-    if (isset($paramsMap['tags'])) {
-
-        foreach ($paramsMap['tags'] as $index => $tag) {
-            $tagsFilterArr [] = " tag.tag_name = :tag{$index} ";
-            $arr[":tag{$index}"] = $tag;
-        }
-        $tagsFilter = implode("OR", $tagsFilterArr);
-
-    }
-    if (isset($paramsMap['searchBY'])) {
-        $arr[':searchBY'] = "%{$paramsMap['searchBY']}%";
-        $searchFFilter = " WHERE  book.book_name like :searchBY and ";
-    }
-    if (isset($paramsMap['order'])) {
-
-        $orderFFilter = "ORDER BY  {$paramsMap['order']}";
-    }
-
-    if (isset($paramsMap['tags'])) {
-        if (isset($paramsMap['tags']) && count($paramsMap['tags']) > 1) {
-            $tagsFilter = '(' . $tagsFilter . ')';
-
-        }
-        $query = getQuery($searchFFilter, $orderFFilter, $tagsFilter);
-
-
-        $result = $dbCon->prepare($query);
-        foreach ($arr as $key => $value) {
-            $result->bindValue($key, $value, PDO::PARAM_STR);
-        }
-        $result->execute();
-        return $result;
-
+        return $pattern;
     } else {
 
         if (isset($paramsMap['searchBY'])) {
             $searchFFilter = str_replace('and', '', $searchFFilter);
         }
 
-        $query = getQuery($searchFFilter, $orderFFilter, $tagsFilter);
-        $result = $dbCon->prepare($query);
+        $pattern = "
+         SELECT book.book_name, 
+                book.price,book.ISBN, 
+                book.url, 
+                book.poster,
+               GROUP_CONCAT(tag.tag_name) AS tags
+        FROM book
+            LEFT JOIN book_tag
+                ON book.book_id = book_tag.book_id
+            LEFT JOIN tag
+                ON book_tag.tag_id = tag.tag_id
+                {$searchFFilter}   {$tagsFilter}
+        GROUP BY book.book_name , book.price,book.ISBN , book.url , book.poster
+       {$orderFFilter}".'LIMIT :offset,:items';
+
+        return $pattern;
+    }
+
+}
+
+function isInRequest($name)
+{
+    if (isset($_GET[$name]) && $_GET[$name] != "NAN") {
+        return true;
+    }
+    return false;
+}
+
+function getBooks($dbCon, $query, $arr, $offset, $items)
+{
+
+    $result = $dbCon->prepare($query);
+
+    if ($arr !== 0) {
         foreach ($arr as $key => $value) {
             $result->bindValue($key, $value, PDO::PARAM_STR);
         }
-        $result->execute();
-
-        return $result;
-
     }
+    $result->bindValue(':offset', $offset, PDO::PARAM_INT);
+    $result->bindValue(':items', $items, PDO::PARAM_INT);
+    $result->execute();
+
+    return $result;
+
+}
+
+
+function getLen($dbCon, $query, $arr, $offset, $items)
+{
+    $query = str_replace('SELECT', 'SELECT SQL_CALC_FOUND_ROWS', $query);
+    $query = str_replace(':offset', $offset, $query);
+    $query = str_replace(':items', $items, $query);
+
+    $kayMap = array_keys($arr);
+    $valueMap = array_values($arr);
+
+    foreach ($valueMap as $index => $value) {
+        $valueMap[$index] = '"' . $value . '"';
+    }
+    $query = str_replace($kayMap, $valueMap, $query);
+    $dbCon->query($query);
+    $counter = $dbCon->query('SELECT FOUND_ROWS()');
+    $rowCount = (int)$counter->fetchColumn();
+
+    return $rowCount;
+
 }
 
 
@@ -99,7 +149,6 @@ function checkOrderCookies($value)
         }
     }
 }
-
 
 function checkTagCookies($value)
 {
@@ -120,10 +169,3 @@ function getTagsArr(PDO $dbConn)
 
     return $tagsArr;
 }
-
-
-
-
-
-
-
