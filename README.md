@@ -24,7 +24,7 @@ Rename config.example  to  config.php
 ```
 Insert your options 
 
-To install db connect to the MySQL server using the mysql command-line client with the following command:  
+To seed db -> connect to the MySQL server using the mysql command-line client with the following command:  
 ```
 shell> mysql -u root -p
 ```
